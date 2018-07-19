@@ -2,12 +2,16 @@
   'use strict';
   var FORM_SELECTOR = '[data-coffee-order="form"]';
   var CHECKLIST_SELECTOR = '[data-coffee-order="checklist"]';
+  var SERVER_URL = 'http://coffeerun-v2-rest-api.herokuapp.com/api/coffeeorders';
   var App = window.App;
   var DataStore = App.DataStore;
-  var Truck = App.Truck;
+  var RemoteDataStore = App.RemoteDataStore;
   var FormHandler = App.FormHandler;
+  var Truck = App.Truck;
+  var Validation = App.Validation;
   var CheckList = App.CheckList;
-  var myTruck = new Truck('ncc-1701', new DataStore());
+  var remoteDS = new RemoteDataStore(SERVER_URL);
+  var myTruck = new Truck('ncc-1701', remoteDS);
   window.myTruck = myTruck;
   var checkList = new CheckList(CHECKLIST_SELECTOR);
   checkList.addClickHandler(myTruck.deliverOrder.bind(myTruck));
@@ -17,7 +21,8 @@
     myTruck.createOrder(data);
     checkList.addRow(data);
   });
-  console.log(formHandler);
+
+  formHandler.addInputHandler(Validation.isCompanyEmail);
 })(window);
 
 function updateTextInput(val) {
